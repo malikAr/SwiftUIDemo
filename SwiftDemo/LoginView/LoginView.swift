@@ -152,7 +152,7 @@ struct LoginView: View {
             {
             viewModel.saveUser()
             self.shouldShowLoginAlert = false
-            self.alertMessage = "User saved Successfully"
+            self.alertMessage = "User saved Successfully."
             }
             else
             {
