@@ -27,7 +27,7 @@ class PhotoViewModel: ObservableObject,PhotoService
             .sink(receiveCompletion: { result in
                 switch result {
                 case .failure(let error):
-                    print("Handle error: \(error)")
+                    print("Handle error : \(error)")
                 case .finished:
                     break
                 }
