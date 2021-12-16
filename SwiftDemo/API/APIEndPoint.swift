@@ -17,7 +17,7 @@ extension PhotoEndPoint: RequestBuilder {
         switch self {
         case .PhotoList:
             guard let url = URL(string: "https://jsonplaceholder.typicode.com/photos")
-                else {preconditionFailure("Invalid URL format")}
+                else {preconditionFailure("Invalid URL format ")}
             let request = URLRequest(url: url)
             return request
         
