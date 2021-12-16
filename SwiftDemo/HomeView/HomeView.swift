@@ -13,6 +13,7 @@ struct HomeView: View {
     @State private var selection: Set<PhotoModel> = []
 
 
+
     var body: some View {
         showList
     }
@@ -20,7 +21,7 @@ struct HomeView: View {
     
     var showList: some View {
         List(self.viewModel.photoList) { photo in
-            PhotoView(photo: photo, isExpanded: self.selection.contains(photo))
+            PhotoView( photo: photo, isExpanded: self.selection.contains(photo))
                 .onTapGesture { self.selectDeselect(photo)
                 }
                 .animation(.linear(duration: 0.3))
@@ -49,6 +50,16 @@ struct HomeView: View {
 struct PhotoView: View {
     let photo: PhotoModel
     let isExpanded: Bool
+    let imageSize: CGFloat = 70
+
+    @StateObject var viewModelImageLoader:ImageLoader
+
+    init(photo:PhotoModel,isExpanded:Bool){
+        self.photo = photo
+        self.isExpanded = isExpanded
+        self._viewModelImageLoader = StateObject(wrappedValue: ImageLoader())
+    }
+
     
     var body: some View {
         HStack {
@@ -61,39 +72,44 @@ struct PhotoView: View {
     private var content: some View {
         VStack(alignment: .leading) {
             HStack {
-                AsyncImage(url: URL(string: photo.thumbnailUrl)) { image in
-                    image
+                if viewModelImageLoader.thumbnailImage != nil{
+                    Image(uiImage: viewModelImageLoader.thumbnailImage!)
                         .resizable()
+                        .frame(width: imageSize, height: imageSize)
                         .scaledToFit()
-                } placeholder: {
-                    Color.purple.opacity(0.1)
+                        .cornerRadius(4)
                 }
-                .scaledToFit()
-                .frame(height: 70)
-                .cornerRadius(4)
+                else {
+                   ProgressView()
+                        .frame(width: imageSize, height: imageSize)
+                }
+
                 VStack(alignment: .leading, spacing: 5){
-                Text(photo.title.capitalized)
-                    .fontWeight(.semibold)
-                    .lineLimit(3)
-                    .minimumScaleFactor(0.5)
+                Text(photo.title)
                 }
             }
             
             if isExpanded {
                 VStack(alignment: .center ) {
-                    AsyncImage(url: URL(string: photo.url)) { image in
-                        image
+                    if viewModelImageLoader.image != nil{
+                        Image(uiImage: viewModelImageLoader.image!)
                             .resizable()
                             .scaledToFit()
-                    } placeholder: {
-                        Color.purple.opacity(0.1)
-                    }.padding()
-                    .scaledToFit()
-                    .frame(height: 200)
-                    .cornerRadius(4)
-                    
+                            .frame(width: 100, height: 100, alignment: .center)
+                            .cornerRadius(4)
+                            .clipped()
+                    }
+                    else {
+                       ProgressView()
+                            .frame(width: imageSize, height: imageSize)
+                    }
+                }.onAppear{
+                    self.viewModelImageLoader.getImage(urlString:photo.thumbnailUrl)
                 }
             }
+        }
+        .onAppear{
+            self.viewModelImageLoader.getThumbnail(urlString: photo.url)
         }
     }
 }
