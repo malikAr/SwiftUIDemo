@@ -1,17 +1,4 @@
-# Xcode
-- task: Xcode@5
-  inputs:
-    actions: 'build'
-    packageApp: false
-# Build, test, and archive an Xcode workspace on macOS.
-# Add steps that install certificates, test, sign, and distribute an app, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/xcode
 
-trigger:
-- main
-
-pool:
-  vmImage: 'macos-latest'
 
 steps:
 - task: Xcode@5
